@@ -62,12 +62,11 @@ connectedCallback() {
                                 </div>
                                 
                                 <div class="col-md-12 mt-3 g-2" >
-                                    <div class="col-md-3" style="display: none" >
+                                    <div class="col-md-3" style="display: block" >
                                         <label class="form-label" > Elige un Modelo: </label>
                                         <select id="model_ds" class="form-control " >
-                                            <option value="small" > Baja Complejidad </option>
-                                            <option value="medium" > Rendimiento Medio </option>
-                                            <option value="large" selected > Refinado </option>
+                                            <option value="small" > Conocimiento cero </option>
+                                            <option value="large" selected > Refinado (Transferir aprendizaje) </option>
                                         </select>
                                     </div>
                                     
