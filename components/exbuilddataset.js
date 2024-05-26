@@ -62,12 +62,12 @@ class BuildDataset extends HTMLElement {
                                 </div>
                                 
                                 <div class="col-md-12 mt-3 g-2" >
-                                    <div class="col-md-3" style="display: none" >
+                                    <div class="col-md-3" style="display: block" >
                                         <label class="form-label" > Choose a Model: </label>
                                         <select id="model_ds" class="form-control " >
-                                            <option value="small" > Low Complexity </option>
-                                            <option value="medium" > Medium Performance </option>
-                                            <option value="large" selected > Refined </option>
+                                            <option value="small" > Zero knowledge </option>
+                                            <!-- <option value="medium" > Medium Performance </option> -->
+                                            <option value="large" selected > Refined (Transfer learning) </option>
                                         </select>
                                     </div>
                                     
@@ -291,19 +291,28 @@ async function trainBuildDs(){
     document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
     
     obj_ds.classes = [name_cl1, name_cl2];
+    
+    let inModel = model_ds.value;
+    inModel = 'large';
+    if( inModel == 'small' ){
+        obj_ds.dimension = [100, 100, 3];
+        obj_ds.maxDim = 100;
+    }
+    if( inModel == 'large' ){
+        obj_ds.dimension = [224, 224, 3];
+        obj_ds.maxDim = 224;
+    }
+    
+    notice_ds.innerHTML = 'Loading model ...';
+    
     let augmentation = true;
-    let factor = 20;
+    let factor = 10;
     obj_ds.train_data = getTrainData( classes_info, augmentation, factor );
     notice_ds.innerHTML = 'Transforming data ...';
     
     setTimeout( async function () {
         tf.engine().startScope();
-        
-        let inModel = model_ds.value;
-        if( inModel == 'large' ){
-            obj_ds.model = modProcess.getModelImage( obj_ds );
-        }
-        notice_ds.innerHTML = 'Loading model ...';
+        obj_ds.model = await eval(`modProcess.getModelImage${ _capitalize(inModel) }( obj_ds )`);
         
         tfvis.visor().open();
                 
@@ -367,9 +376,9 @@ let init_case_buildds = () => {
     area_result_ds.style.display='none';
     
     let proportions = { 'cls0': 100, 'cls1': 100 };
-    obj_ds = new AIExp( 'custom', 100, proportions, 70, 30 );
-    obj_ds.dimension = [60, 60, 3];
-    obj_ds.maxDim = 60;
+    obj_ds = new AIExp( 'custom', 100, proportions, 70, 30,  );
+    obj_ds.dimension = [224, 224, 3];
+    obj_ds.maxDim = 224;
 
 }
 init_case_buildds()

@@ -293,6 +293,20 @@ async function trainBuildDs(){
     document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
     
     obj_ds.classes = [name_cl1, name_cl2];
+    
+    let inModel = model_ds.value;
+    inModel = 'large';
+    if( inModel == 'small' ){
+        obj_ds.dimension = [100, 100, 3];
+        obj_ds.maxDim = 100;
+    }
+    if( inModel == 'large' ){
+        obj_ds.dimension = [224, 224, 3];
+        obj_ds.maxDim = 224;
+    }
+    
+    notice_ds.innerHTML = 'Carregant model ...';
+    
     let augmentation = true;
     let factor = 20;
     obj_ds.train_data = getTrainData( classes_info, augmentation, factor );
@@ -300,12 +314,7 @@ async function trainBuildDs(){
     
     setTimeout( async function () {
         tf.engine().startScope();
-        
-        let inModel = model_ds.value;
-        if( inModel == 'large' ){
-            obj_ds.model = modProcess.getModelImage( obj_ds );
-        }
-        notice_ds.innerHTML = 'Carregant model ...';
+        obj_ds.model = await eval(`modProcess.getModelImage${ _capitalize(inModel) }( obj_ds )`);
         
         tfvis.visor().open();
                 

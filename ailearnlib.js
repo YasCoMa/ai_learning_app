@@ -66,12 +66,37 @@ const pretrainedModel = {
 
 const catDogs = {
   //url: "models/catxdogs/ml-classifier-dogs-cats.json",
-  url: "https://raw.githubusercontent.com/dkreider/tensorflowjs-cat-vs-dog/master/trained-model/model.json",
+  //url: "https://raw.githubusercontent.com/dkreider/tensorflowjs-cat-vs-dog/master/trained-model/model.json",
+  url: "https://raw.githubusercontent.com/aralroca/cat-dog-detection-tfjs/master/public/model/ml-classifier-dogs-cats.json",
   url_data: "/ai_learning_app/100_features_catsxdogs.json",
   layer: null,
-  dimensionVec: [150, 150, 3],
-  classNames: ["Cat", "Dog"]
+  //dimensionVec: [150, 150, 3],
+  dimensionVec: [224, 224, 3],
+  classNames: ["Dog", "Cat"],
+  pretrained: true
 };
+
+const BPRETRAINED_MODEL = {
+  name: 'MobileNet',
+  url: 'https://tfhub.dev/google/imagenet/mobilenet_v2_140_224/classification/2'
+  //url: 'https://storage.googleapis.com/tfjs-models/pretrained_models/mobilenet_v2/mobilenet_v2_100_224/model.json'
+  // OR
+  // name: 'VGG19',
+  // url: 'https://storage.googleapis.com/tfjs-models/pretrained_models/vgg19/model.json'
+};
+
+async function BloadModel() {
+  const model = await tf.loadLayersModel( pretrainedModel.url);
+  let layer = model.getLayer('conv_pw_13_relu');
+  //const model = await tf.loadGraphModel( BPRETRAINED_MODEL.url, {fromTFHub: true})
+    
+  // Freeze the pre-trained model layers (optional, can be adjusted)
+  for (const layer of model.layers) {
+    layer.trainable = false;
+  }
+    
+  return [model, layer];
+}
 
 const digits = {
   //url: "models/mnist/model.json",
@@ -87,6 +112,14 @@ const digits = {
 
 let modLoad = { 'pretrained' : { 'mobileNet': pretrainedModel, 'catDogs': catDogs, 'digits': digits } }
 
+modLoad.loadMobilenet = async function ( pretrainedModel ){
+  const mobilenet = await tf.loadLayersModel(pretrainedModel.url);
+  const layer = mobilenet.getLayer(pretrainedModel.layer);
+  const pretrained = await tf.model({ inputs: mobilenet.inputs, outputs: layer.output, });
+  
+  return pretrained;
+}
+
 modLoad.loadModel = async function ( inModel ) {
   let dataTrain = null;
   dataTrain = await modLoad.loadData( inModel.url_data );
@@ -98,16 +131,10 @@ modLoad.loadModel = async function ( inModel ) {
   let model = await tf.loadLayersModel( durl );
   let pretrained = null;
   
-  /*
-  if( inModel.layer ){
-    const layer = model.getLayer( inModel.layer );
-    pretrained = await tf.model({
-      inputs: model.inputs,
-      outputs: layer.output,
-    });
+  if( inModel.pretrained ){
+    pretrained = await modLoad.loadMobilenet(pretrainedModel);
   }
-  */
-
+  
   return [model, pretrained, dataTrain];
 }
 
@@ -170,25 +197,25 @@ modProcess.getVectorFromImgTag = function ( inputFile ){ // document.querySelect
 }
 
 modProcess.predictBinary = function ( pixels, obj, model, dimension ) {
-  /*
-  const image = tf.reshape( pixels, dimension ).toFloat().div(tf.scalar(127)).sub(
-    tf.scalar(1),
-  );
-  */
-  let maxd = Math.max.apply(null, dimension);
-  const image = pixels.resizeNearestNeighbor( [maxd, maxd] ).toFloat().expandDims();
+    let maxd = Math.max.apply(null, dimension);
+    let image = pixels.resizeNearestNeighbor( [maxd, maxd] ).toFloat().expandDims();
   
-  let modelPrediction = null;
-  modelPrediction = model.predict( image );
+    if( obj.pretrained != null ){
+        image = tf.reshape( pixels, [1].concat(dimension) ).toFloat().div(tf.scalar(127)).sub( tf.scalar(1) );
+        image = obj.pretrained.predict(image)
+    }
   
-  let results = Array.from( modelPrediction.dataSync() );
-  let index = tf.tensor1d( results ).argMax(-1).dataSync()[0];
-  results = obj.classes[index];
+    let modelPrediction = null;
+    modelPrediction = model.predict( image );
   
-  return results;
+    let results = Array.from( modelPrediction.dataSync() );
+    let index = tf.tensor1d( results ).argMax(-1).dataSync()[0];
+    results = obj.classes[index];
+  
+    return results;
 }
 
-modProcess.getModelImage = function(obj) {
+modProcess.getModelImageSmall = function(obj) {
   const model = tf.sequential();
 
   // Parameters to adjust according to dataset
@@ -251,6 +278,82 @@ modProcess.getModelImage = function(obj) {
   });
 
   return model;
+}
+
+modProcess.getModelImageLarge = async function(obj) {
+  // Inspiration: https://ai.plainenglish.io/transfer-learning-with-tensorflowjs-e84b3b6cc37a
+  
+  // Parameters to adjust according to dataset
+  const IMAGE_WIDTH = obj.maxDim;
+  const IMAGE_HEIGHT = obj.maxDim;
+  const IMAGE_CHANNELS = obj.dimension.slice(-1)[0];
+  const NUM_OUTPUT_CLASSES = obj.classes.length;
+  let loss_function = "binaryCrossentropy";
+  if( NUM_OUTPUT_CLASSES > 2){
+    loss_function = 'categoricalCrossentropy';
+  }
+  
+  let model = null;
+  let layer = null;
+  if( model == null){
+    [model, layer] = await BloadModel();
+  }
+  let truncatedLayerOutput = layer.output ;
+  
+  head = tf.sequential({
+        layers: [
+            tf.layers.flatten({
+                name: 'flatten',
+                inputShape: truncatedLayerOutput.shape.slice(1),
+            }),
+            tf.layers.dense({
+                name: 'hidden_dense_1',
+                units: 1024,
+                activation: 'relu'
+            }),
+            // Layer 2. The number of units of the last layer should 
+            // correspond to the number of classes we want to predict.
+            tf.layers.dense({
+                name: 'softmax_classification',
+                units: NUM_OUTPUT_CLASSES,
+                activation: 'softmax'
+            })
+        ]
+    });
+  
+  /*
+  // Add new layers for your custom classification task
+  const newLayers = [
+      tf.layers.flatten(),
+      tf.layers.dense({ units: 1024, activation: 'relu' }),
+      tf.layers.dropout(0.5),
+      tf.layers.dense({ units: NUM_OUTPUT_CLASSES, activation: 'softmax' }) 
+    ];
+  let head = tf.sequential();
+  //let allLayers = [ model ].concat( layer ).concat( newLayers );
+  for( let l of newLayers ){
+    head.add( l );
+  }
+  */
+  
+  let newOutput = head.apply(truncatedLayerOutput);
+  
+  const final_model = tf.model({
+        inputs: model.inputs,
+        outputs: newOutput
+    });
+  
+  // Choose an optimizer, loss function and accuracy metric,
+  // then compile and return the model
+  const optimizer = tf.train.adam();
+  optimizer.learningRate = 0.0001;
+  final_model.compile({
+    optimizer: optimizer,
+    loss: loss_function,
+    metrics: ['accuracy'],
+  });
+
+  return final_model;
 }
 
 modProcess.transformLabels = function( obj, data ){
@@ -406,7 +509,7 @@ modProcess.doClustering = async function (obj, embedding) {
   let classLabels = obj.train_data.class;
   let emb = tf.tensor( embedding );
   
-  let epochs = 30;
+  let epochs = 20;
   let k = obj.classes.length;
   
   let kmeans = new KMeans( k, epochs ); // binary

@@ -205,6 +205,7 @@ function onLoadPreview(e) {
     const imagen = e.target.files[0];
     if (!imagen) {
         document.getElementById("container_predict").style.display='none';
+        document.getElementById("area_result").style.display='none';
         return
     }
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -214,41 +215,41 @@ function onLoadPreview(e) {
 }
 
 function predictFromPretrained() {
-let input = document.getElementById('field_cls_predict');
-if( input.files.length > 0 || dataset.value == 'digits' ){
-    document.querySelectorAll('.disab').forEach( e => e.disabled=true );
-    area_result.style.display='none';
-    action.innerHTML = 'Predint ...';
-    
-    tf.engine().startScope();
-    
-    setTimeout( function() {
-        let inn = null;
+    let input = document.getElementById('field_cls_predict');
+    if( input.files.length > 0 || dataset.value == 'digits' ){
+        document.querySelectorAll('.disab').forEach( e => e.disabled=true );
+        area_result.style.display='none';
+        action.innerHTML = 'Predint ...';
         
-        let resultado = '';
-        if( obj_cls.classes.length == 2 ){
-            inn = modProcess.getVectorFromImgTag( img_predict );
-            resultado = modProcess.predictBinary( inn, obj_cls, obj_cls.model, obj_cls.dimension );
-        }
-        else {
-            inn = modProcess.getVectorFromCanvas();
-            resultado = modProcess.predictMulti( inn, obj_cls, obj_cls.model, obj_cls.dimension );
-        }
-        tf.engine().endScope();
+        tf.engine().startScope();
         
-        if( dataset.value == 'catDogs' ){
-            resultado = ( resultado == 'Dog') ? '🐶' : '😸' ;
-        }
-        
-        document.getElementById('result_cls').innerHTML = `<span> ${resultado} </span>`;
-        area_result.style.display='';
-        document.querySelectorAll('.disab').forEach( e => e.disabled=false );
-        action.innerHTML = 'Predit';
-    }, 2000);
-}
-else{
-    alert('No hi ha cap imatge seleccionada');
-}
+        setTimeout( function() {
+            let inn = null;
+            
+            let resultado = '';
+            if( obj_cls.classes.length == 2 ){
+                inn = modProcess.getVectorFromImgTag( img_predict );
+                resultado = modProcess.predictBinary( inn, obj_cls, obj_cls.model, obj_cls.dimension );
+            }
+            else {
+                inn = modProcess.getVectorFromCanvas();
+                resultado = modProcess.predictMulti( inn, obj_cls, obj_cls.model, obj_cls.dimension );
+            }
+            tf.engine().endScope();
+            
+            if( dataset.value == 'catDogs' ){
+                resultado = ( resultado == 'Dog') ? '🐶' : '😸' ;
+            }
+            
+            document.getElementById('result_cls').innerHTML = `<span> ${resultado} </span>`;
+            area_result.style.display='';
+            document.querySelectorAll('.disab').forEach( e => e.disabled=false );
+            action.innerHTML = 'Predit';
+        }, 2000);
+    }
+    else{
+        alert('No hi ha cap imatge seleccionada');
+    }
 }
 
 async function buildCustomModelEvaluate(){
