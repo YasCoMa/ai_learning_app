@@ -202,6 +202,7 @@ function onLoadPreview(e) {
     const image = e.target.files[0];
     if (!image) {
         document.getElementById("container_predict").style.display='none';
+        document.getElementById("area_result").style.display='none';
         return
     }
     if (previewUrl) URL.revokeObjectURL(previewUrl);
