@@ -1,24 +1,25 @@
-class BuildDataset extends HTMLElement {
+class DrugTargetGame extends HTMLElement {
   constructor() {
     super();
   }
 
   connectedCallback() {
     this.innerHTML = `
-       <section id="intro_buildds" class="mt-3">
+       <section id="intro_drugtargetgame" class="mt-3">
             <p>
-               Classification is the task of predicting pre-defined labels for pieces of data, using a model trained with previous labeled data for each class of the domain application. In this tab, you may build your own sample datasets in two groups and test how the model behave according to your selection of images. According to your selection you will train a model (teaching the machine how to separate the grouped images) and try to predict the group for a new image.
+               Classification is the task of predicting pre-defined labels for pieces of data, using a model trained with previous labeled data for each class of the domain application. 
+               In this tab, you may build a special model in the medicine domain that learns which drugs (represented in a simple manner as geometric shapes) will bind to the oncogenic proteins. According to your selection you will train a model (teaching the machine how to separate the grouped images) and try to predict the group for a new image. The test of this model will be as a game, in which each player will upload a handwritten drawing with the shape that the player thinks will bind to the chosen protein target. As results, it will give a ranking table showing the player that drew the compound (shape) designed to bind to the target. The proteins have some spots in their structure that some compounds can use to form an interaction and modulate the protein function and "fix" the regulatory system in case the protein is not working properly.
             </p>
             
         </section>
 
-        <section id="usage_buildds" class="mt-3" style="margin-bottom: 20px;" >
+        <section id="usage_drugtargetgame" class="mt-3" style="margin-bottom: 20px;" >
 
-            <div class="accordion" id="accordionBuildDs">
+            <div class="accordion" id="accordionDrugTarget">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Mount the groups of images and train a model
+                            Choose the protein and Mount the groups of shapes that will "bind" (positive class) or not (negative class) to train the model
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionBuildDs">
@@ -26,34 +27,73 @@ class BuildDataset extends HTMLElement {
                             <!-- Show and build dataset -->
                             <div class="row" >
                                 <div class="col-md-12" >
-                                    <h3> Available images: </h3>
+                                    <h3> Choose the protein (target): </h3>
                                     
-                                    <div class="row g-4 align-items-start" id="available_examples" > </div>
+                                    <div class="row g-4 align-items-start" id="available_examples" > 
+                                    
+                                         <div class="col-md-6"  >
+                                            <h5> 
+                                                <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="protein_choice" id="prot_bcl2" checked="true" >
+                                                  <label class="form-check-label" for="prot_bcl2">
+                                                    BCL-2
+                                                  </label>
+                                                </div>
+                                            </h5>
+                                            <div class="col-md-12 mt-1 text-center" style="display: none;">
+                                                <p> Protein Apoptosis regulator Bcl-2, whose mutations turn it a biomarker for Non-Hodgkin Lymphome type of cancer  </p>
+                                                <img src="../imgs/proteins/bcl2.png" />
+                                            </div>
+                                        </div>
+                                        
+                                         <div class="col-md-6"  >
+                                            <h5> 
+                                                <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="protein_choice" id="prot_brca1" checked="true" >
+                                                  <label class="form-check-label" for="prot_brca1">
+                                                    BRCA1
+                                                  </label>
+                                                </div>
+                                            </h5>
+                                            <div class="col-md-12 mt-1 text-center" style="display: none;">
+                                                <p> This is a tumor suppressor protein involved in the DNA damage response, is mutated in various cancer types  </p>
+                                                <img src="../imgs/proteins/brca1.png" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="col-md-12 mt-3" >
-                                    <h3> Drag images from the animal types shown above and move them into the two below group areas. Then, name these groups as you want.</h3>
+                                    <h3> Select the types of compounds that will act as binders (positive cases) and non binders of the chosen target.</h3>
                                     
                                     <div class="row g-4 align-items-start" id="datasets_area" >
                                     
                                         <div class="col-md-6"  >
-                                            <h5> Group 1: </h5>
-                                            <div class="col-md-12 mt-1 text-center">
-                                                <input type="text" class="form-control" id="class_1" placeholder="Name group 1" />
+                                            <h5> Not Binder: </h5>
+                                            <div class="col-md-12 mt-1 text-center" id="options_notbinder" >
+                                                
                                             </div>
                                             
-                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_1" ondrop="drop(event)" ondragover="allowDrop(event)"  >
+                                            <div class="col-md-12 mt-1 text-center" style="display: none;">
+                                                <input type="text" class="form-control" id="class_1" value = "Binder" />
+                                            </div>
+                                            
+                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_1"   >
                                             
                                             </div>
                                         </div>
                                         
                                         <div class="col-md-6 "  >
-                                            <h5> Group 2: </h5>
-                                            <div class="col-md-12 mt-1 text-center">
-                                                <input type="text" class="form-control" id="class_2" placeholder="Name group 2" />
+                                            <h5> Binder: </h5>
+                                            <div class="col-md-12 mt-1 text-center" id="options_binder" >
+                                                
                                             </div>
                                             
-                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_2" ondrop="drop(event)" ondragover="allowDrop(event)"  >
+                                            <div class="col-md-12 mt-1 text-center" style="display: none;" >
+                                                <input type="text" class="form-control" id="class_2" value = "Not Binder" />
+                                            </div>
+                                            
+                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_2"  >
                                             
                                             </div>
                                         </div>
@@ -62,7 +102,7 @@ class BuildDataset extends HTMLElement {
                                 </div>
                                 
                                 <div class="col-md-12 mt-3 g-2" >
-                                    <div class="col-md-3" style="display: block" >
+                                    <div class="col-md-3" style="display: none" >
                                         <label class="form-label" > Choose a Model: </label>
                                         <select id="model_ds" class="form-control " >
                                             <option value="small" > Zero knowledge </option>
@@ -75,6 +115,8 @@ class BuildDataset extends HTMLElement {
                                          <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="trainBuildDs()" > Train </button>
                                          
                                          <p id="notice_ds" class="mt-2" > </p>
+                                         
+                                         <button type="button" class="btn btn-primary disab_ds" id="down_model" style="margin-top: 32px; display: none;" onClick="downloadModel()" > Save model </button>
                                     </div>
                                 </div>
                                 
@@ -162,26 +204,73 @@ class BuildDataset extends HTMLElement {
     `;
   }
 }
-customElements.define('buildds-component', BuildDataset);
+customElements.define('drugtarget-component', DrugTargetGame);
 
-/* Building datasets area */
-function allowDrop(ev) {
-  ev.preventDefault();
+/* Load examples upon checkbox item selection */
+function generateShapeOptionsSelection(){
+     let available_classes = { "square": 12, "circle": 5, "long_square": 45, "triangle": 9, "triangle_inverted": 9 };
+     
+     let classes = ['binder', 'notbinder'];
+     for( let cl of classes ){
+         let htmls = "";
+         for( let c of Object.keys( obj_ds_dt.available_classes) ){
+            htmls += `
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="${cl}_sel_${c}" value="${c}" onchange="treatBinderSelection(this)" >
+                  <label class="form-check-label" for="${cl}_sel_${c}"> ${c} </label>
+                </div>
+            `;
+         }
+         document.getElementById(`options_${cl}`).innerHTML = htmls;
+    }
 }
 
-function drag(ev) {
-  ev.dataTransfer.setData("identifier", ev.target.id);
+function treatBinderSelection(obj){
+    let _class = obj.id.split('_sel_')[0];
+    let oposite = ( _class=="binder" ) ? "notbinder" : "binder";
+    let div_class = ( _class=="binder" ) ? "elements_class_2" : "elements_class_1";
+    let _shape = obj.id.split('_sel_')[0];
+    if( obj.checked ){
+        document.getElementById(`${oposite}_sel_${_shape}`).disabled = true;
+        insertShape( div_class, _class, _shape );
+    }
+    else{
+        document.getElementById(`${oposite}_sel_${_shape}`).disabled = false;
+        removeShape( _class, _shape);
+    }
 }
 
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("identifier");
-  ev.target.appendChild( document.getElementById( "container_"+data ) );
+function insertShape( div_class, name_class, name_shape ){
+    let available_classes = { "bird": 18, "lion": 18, "cat": 18, "dog": 18 };
+    
+    c = name_shape
+    let path = `../imgs/binding_exercise/${c}/`;
+    let prefix = `${c}_sample_`;
+    let setList = [];
+    for ( let i=1; i <= obj_dt_ds.available_classes[c]; i++ ){
+        setList.push( prefix+i )
+    }
+    let chosen = _shuffle(setList).slice(0, 10);
+    let innerImgs = "";
+    for( let nimg of chosen ){
+        innerImgs += `
+            <div id='container_img_group_${ nimg }' class="${name_class}_img_${name_shape}" style=" padding: 5px;" >
+                <img id='img_group_${ nimg }' src="${ path }/${ nimg }.png" width="100" height="100"  />
+            </div>
+        `;
+    }
+    
+    document.getElementById(div_class).innerHTML = htmls;
 }
 
-const _capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+function removeShape(name_class, name_shape){
+    let elements = document.querySelectorAll(`.${name_class}_img_${name_shape}`)
+    for( let el of elements){
+        el.remove();
+    }
 }
+
+
 const _shuffle = ( array ) => { 
   for (let i = array.length - 1; i > 0; i--) { 
     const j = Math.floor(Math.random() * (i + 1)); 
@@ -189,55 +278,6 @@ const _shuffle = ( array ) => {
   } 
   return array; 
 }; 
-
-function loadExamplesClasses(){
-    let available_classes = { "bird": 18, "lion": 18, "cat": 18, "dog": 18 };
-    
-    let htmls = "";
-    for( let c of Object.keys(available_classes) ){
-        let path = `../examples/expSelfBuildData/${c}`;
-        let prefix = c[0];
-        let setList = [];
-        for ( let i=1; i <= available_classes[c]; i++ ){
-            setList.push( prefix+i )
-        }
-        let chosen = _shuffle(setList).slice(0, 10);
-        let innerImgs = "";
-        for( let nimg of chosen ){
-            innerImgs += `
-                <div id='container_img_group_${ nimg }' class="_img" style=" padding: 5px;" draggable="true" ondragstart="drag(event)" onclick="remove(this)" >
-                    <i class="fa-solid fa-circle-xmark fa-2x" ></i>
-                    
-                    <img id='img_group_${ nimg }' src="${ path }/${ nimg }.png" width="100" height="100"  />
-                </div>
-            `;
-        }
-        
-        // <div class="col-auto" id="cls_${c}" >
-        htmls += `
-            <div class="col-md-6" id="cls_${c}" >
-                <h5> ${ _capitalize(c) } </h5>
-                <div class="col-md-12" id="content_${c}" >
-                    ${innerImgs}
-                </div>
-                
-            </div>
-        `;
-    }
-    
-    document.getElementById('available_examples').innerHTML = htmls;
-}
-
-function remove( obj ){
-    let parent = obj.parentNode.id;
-    
-    if( parent.indexOf('elements_class') == 0 ){
-        let map = { 'b': 'bird', 'c': 'cat', 'd': 'dog', 'l': 'lion' };
-        let prefix = obj.id.split('_').slice(-1)[0][0];
-        let classDiv = eval( `content_${ map[prefix] }` );
-        classDiv.appendChild( obj );
-    }
-}
 
 /* Transformation and training functions */
 function getTrainData( classes_info, augmentation=false, factor=1 ){
@@ -290,42 +330,55 @@ async function trainBuildDs(){
     
     document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
     
-    obj_ds.classes = [name_cl1, name_cl2];
+    obj_dt_ds.classes = [name_cl1, name_cl2];
     
     let inModel = model_ds.value;
     inModel = 'large';
     if( inModel == 'small' ){
-        obj_ds.dimension = [100, 100, 3];
-        obj_ds.maxDim = 100;
+        obj_dt_ds.dimension = [100, 100, 3];
+        obj_dt_ds.maxDim = 100;
     }
     if( inModel == 'large' ){
-        obj_ds.dimension = [224, 224, 3];
-        obj_ds.maxDim = 224;
+        obj_dt_ds.dimension = [224, 224, 3];
+        obj_dt_ds.maxDim = 224;
     }
     
     notice_ds.innerHTML = 'Loading model ...';
     
     let augmentation = true;
     let factor = 10;
-    obj_ds.train_data = getTrainData( classes_info, augmentation, factor );
+    obj_dt_ds.train_data = getTrainData( classes_info, augmentation, factor );
     notice_ds.innerHTML = 'Transforming data ...';
     
     setTimeout( async function () {
         tf.engine().startScope();
-        obj_ds.model = await eval(`modProcess.getModelImage${ _capitalize(inModel) }( obj_ds )`);
+        obj_dt_ds.model = await eval(`modProcess.getModelImage${ _capitalize(inModel) }( obj_dt_ds )`);
         
         tfvis.visor().open();
                 
         notice_ds.innerHTML = 'Training ...';
-        let fitted_model = await modProcess.train( obj_ds, obj_ds.model );
-        await modViz.showAccuracy( obj_ds, obj_ds.model );
-        await modViz.showConfusion( obj_ds, obj_ds.model );
+        let fitted_model = await modProcess.train( obj_dt_ds, obj_dt_ds.model );
+        await modViz.showAccuracy( obj_dt_ds, obj_dt_ds.model );
+        await modViz.showConfusion( obj_dt_ds, obj_dt_ds.model );
+        obj_dt_ds.final_model = fitted_model;
         
         tf.engine().endScope();
         
         document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
         notice_ds.innerHTML = '';
     }, 2000);
+}
+
+/* Save model */
+function downloadModel(){
+    let url = URL.createObjectURL(
+       new Blob([JSON.stringify( obj_dt_ds.final_model, null, 2)], {
+          type: "application/json",
+        })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.click();
 }
 
 /* Prediction */
@@ -345,11 +398,11 @@ function onLoadPreview_buildDs(e) {
 function predictFromCustomModel(){
     let input = document.getElementById('field_cls_predict_bds');
     if( input.files.length > 0 ){
-        if( obj_ds.model != null ){
+        if( obj_dt_ds.model != null ){
             tf.engine().startScope();
         
             let inn = modProcess.getVectorFromImgTag( img_predict_bds );
-            let outcome = modProcess.predictBinary( inn, obj_ds, obj_ds.model, obj_ds.dimension );
+            let outcome = modProcess.predictBinary( inn, obj_dt_ds, obj_dt_ds.model, obj_dt_ds.dimension );
             
             tf.engine().endScope();
             
@@ -368,18 +421,20 @@ function predictFromCustomModel(){
 
 
 
-let obj_ds = {};
-let init_case_buildds = () => {
-    // Loading available images in containers
-    loadExamplesClasses();
+let obj_dt_ds = {};
+let init_case_buildds_dt = () => {
+    obj_dt_ds.available_classes = { "square": 12, "circle": 5, "long_square": 45, "triangle": 9, "triangle_inverted": 9 };
+    
+    // Load options of compound shapes
+    generateShapeOptionsSelection();
     
     area_result_ds.style.display='none';
     
     let proportions = { 'cls0': 100, 'cls1': 100 };
-    obj_ds = new AIExp( 'custom', 100, proportions, 70, 30,  );
-    obj_ds.dimension = [224, 224, 3];
-    obj_ds.maxDim = 224;
+    obj_dt_ds = new AIExp( 'custom', 100, proportions, 70, 30,  );
+    obj_dt_ds.dimension = [224, 224, 3];
+    obj_dt_ds.maxDim = 224;
 
 }
-init_case_buildds()
+init_case_buildds_dt()
 
