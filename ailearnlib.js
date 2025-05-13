@@ -209,10 +209,12 @@ modProcess.predictBinary = function ( pixels, obj, model, dimension ) {
     modelPrediction = model.predict( image );
   
     let results = Array.from( modelPrediction.dataSync() );
-    let index = tf.tensor1d( results ).argMax(-1).dataSync()[0];
-    results = obj.classes[index];
+    let resultst = tf.tensor1d( results );
+    let index = resultst.argMax(-1).dataSync()[0];
+    let outcome = obj.classes[index];
+    let prob = results[1]; // index of binder class
   
-    return results;
+    return outcome, prob;
 }
 
 modProcess.getModelImageSmall = function(obj) {

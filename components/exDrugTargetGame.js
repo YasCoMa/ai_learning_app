@@ -29,7 +29,7 @@ class DrugTargetGame extends HTMLElement {
                                 <div class="col-md-12" >
                                     <h3> Choose the protein (target): </h3>
                                     
-                                    <div class="row g-4 align-items-start" id="available_examples" > 
+                                    <div class="row g-4 align-items-start" > 
                                     
                                          <div class="col-md-6"  >
                                             <h5> 
@@ -40,24 +40,24 @@ class DrugTargetGame extends HTMLElement {
                                                   </label>
                                                 </div>
                                             </h5>
-                                            <div class="col-md-12 mt-1 text-center" style="display: none;">
+                                            <div class="col-md-12 mt-1 text-center" >
                                                 <p> Protein Apoptosis regulator Bcl-2, whose mutations turn it a biomarker for Non-Hodgkin Lymphome type of cancer  </p>
-                                                <img src="../imgs/proteins/bcl2.png" />
+                                                <img class = ' imgt-size' src="../imgs/binding_exercise/proteins/bcl2.png" />
                                             </div>
                                         </div>
                                         
                                          <div class="col-md-6"  >
                                             <h5> 
                                                 <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="protein_choice" id="prot_brca1" checked="true" >
+                                                  <input class="form-check-input" type="radio" name="protein_choice" id="prot_brca1" >
                                                   <label class="form-check-label" for="prot_brca1">
                                                     BRCA1
                                                   </label>
                                                 </div>
                                             </h5>
-                                            <div class="col-md-12 mt-1 text-center" style="display: none;">
+                                            <div class="col-md-12 mt-1 text-center">
                                                 <p> This is a tumor suppressor protein involved in the DNA damage response, is mutated in various cancer types  </p>
-                                                <img src="../imgs/proteins/brca1.png" />
+                                                <img class = ' imgt-size' src="../imgs/binding_exercise/proteins/brca1.png" />
                                             </div>
                                         </div>
                                     </div>
@@ -129,34 +129,88 @@ class DrugTargetGame extends HTMLElement {
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                            Use your model to classify new images
+                            Use the trained model to classify handwritten images of compound candidates to bind to the protein targets
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionClassify">
                         <div class="accordion-body">
-
-                            <div class="row g-2 align-items-start"  >
-                                <div class="col-auto" id='fromImageDs' >
-                                    <label class="form-label" >Choose an image file:</label>
-                                    <input class="form-control" type="file" onchange="onLoadPreview_buildDs(event)" accept="image/*" id="field_cls_predict_bds" />
-
-                                    <div id="container_predict_bds" style=" margin-top: 10; display: none; " >
-                                        <img id='img_predict_bds' src="" width="200" height="200" alt="preview" />
+                            <div class="row" >
+                                <div class="col-md-12" >
+                                    <h3> Choose the protein (target): </h3>
+                                    
+                                    <div class="row g-4 align-items-start" > 
+                                    
+                                         <div class="col-md-6"  >
+                                            <h5> 
+                                                <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="pred_protein_choice" id="pred_prot_bcl2" checked="true" onChange="loadModel()" >
+                                                  <label class="form-check-label" for="prot_bcl2">
+                                                    BCL-2
+                                                  </label>
+                                                </div>
+                                            </h5>
+                                            <div class="col-md-12 mt-1 text-center" >
+                                                <p> Protein Apoptosis regulator Bcl-2, whose mutations turn it a biomarker for Non-Hodgkin Lymphome type of cancer  </p>
+                                                <img class = ' imgt-size' src="../imgs/binding_exercise/proteins/bcl2.png" />
+                                            </div>
+                                        </div>
+                                        
+                                         <div class="col-md-6"  >
+                                            <h5> 
+                                                <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="pred_protein_choice" id="pred_prot_brca1" onChange="loadModel()" >
+                                                  <label class="form-check-label" for="prot_brca1">
+                                                    BRCA1
+                                                  </label>
+                                                </div>
+                                            </h5>
+                                            <div class="col-md-12 mt-1 text-center" >
+                                                <p> This is a tumor suppressor protein involved in the DNA damage response, is mutated in various cancer types  </p>
+                                                <img class = ' imgt-size' src="../imgs/binding_exercise/proteins/brca1.png" />
+                                            </div>
+                                        </div>
                                     </div>
-
+                                    
+                                    <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="loadModel()" > Load model </button>
+                                    <p id = "info_model" > </p>
                                 </div>
                                 
-
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="predictFromCustomModel()" > Predict </button>
+                                <div class="col-md-12" >
+                                    <h3> Add players: </h3>
                                     
-                                    <div id="area_result_ds" >
-                                        <h4 class="mt-4"> Result: </h4>
+                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="addFieldPlayer()" > Add new player </button>
+                                    
+                                    <div class="row g-2 align-items-start" id = "players" >
+                                        <div class="col-auto" >
+                                            <label class="form-label mt-2" >Player name:</label>
+                                            <input type="text" class="form-control" id="name_p1" placeholder="Name player 1">
+                                            
+                                            <label class="form-label mt-2" >Choose an image file:</label>
+                                            <input class="form-control" type="file" onchange="onLoadPreview_dt(event, 'p1')" accept="image/*" id="field_cls_predict_bds_p1" />
 
-                                        <div id="result_cls_ds" style="font-size: 50; padding: 15px: border: 2px solid blue;" > </div>
+                                            <div id="container_predict_bds_p1" style=" margin-top: 10; display: none; " >
+                                                <img id='img_predict_bds_p1' src="" width="200" height="200" alt="preview" />
+                                            </div>
+
+                                        </div>
+                                    
                                     </div>
                                 </div>
+                                
+                                <div class="col-md-12" id = "area_result_ds_dt" >
+                                    <h3> Ranking: </h3>
+                                    
+                                    <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="predictFromCustomModel()" > Test protein binder candidates </button>
+                                    <p id = "info_predict" > </p>
+                                        
+                                        <div class="justify-content-center text-center" >
+                                            <div id="tab_cls_dt_ds" style="font-size: 50; padding: 15px: border: 2px solid blue;" > </div>
+                                        </div>
+                                </div>
+                                
+                                
                             </div>
+                                
                         </div>
                         
                     </div>
@@ -186,6 +240,9 @@ class DrugTargetGame extends HTMLElement {
                 display: none;
                 color: #f00;
              }
+             .imgt-size{
+                height: 250px;
+             }
              
             #datasets_area {
                 ._img {
@@ -208,12 +265,11 @@ customElements.define('drugtarget-component', DrugTargetGame);
 
 /* Load examples upon checkbox item selection */
 function generateShapeOptionsSelection(){
-     let available_classes = { "square": 12, "circle": 5, "long_square": 45, "triangle": 9, "triangle_inverted": 9 };
      
      let classes = ['binder', 'notbinder'];
      for( let cl of classes ){
          let htmls = "";
-         for( let c of Object.keys( obj_ds_dt.available_classes) ){
+         for( let c of Object.keys( obj_dt_ds.available_classes) ){
             htmls += `
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="checkbox" id="${cl}_sel_${c}" value="${c}" onchange="treatBinderSelection(this)" >
@@ -229,7 +285,7 @@ function treatBinderSelection(obj){
     let _class = obj.id.split('_sel_')[0];
     let oposite = ( _class=="binder" ) ? "notbinder" : "binder";
     let div_class = ( _class=="binder" ) ? "elements_class_2" : "elements_class_1";
-    let _shape = obj.id.split('_sel_')[0];
+    let _shape = obj.id.split('_sel_')[1];
     if( obj.checked ){
         document.getElementById(`${oposite}_sel_${_shape}`).disabled = true;
         insertShape( div_class, _class, _shape );
@@ -241,26 +297,25 @@ function treatBinderSelection(obj){
 }
 
 function insertShape( div_class, name_class, name_shape ){
-    let available_classes = { "bird": 18, "lion": 18, "cat": 18, "dog": 18 };
     
-    c = name_shape
+    let c = name_shape
     let path = `../imgs/binding_exercise/${c}/`;
     let prefix = `${c}_sample_`;
     let setList = [];
     for ( let i=1; i <= obj_dt_ds.available_classes[c]; i++ ){
         setList.push( prefix+i )
     }
-    let chosen = _shuffle(setList).slice(0, 10);
+    let chosen = _shuffle_dt(setList).slice(0, 10);
     let innerImgs = "";
     for( let nimg of chosen ){
         innerImgs += `
-            <div id='container_img_group_${ nimg }' class="${name_class}_img_${name_shape}" style=" padding: 5px;" >
+            <div id='container_img_group_${ nimg }' class=" _img ${name_class}_img_${name_shape}" style=" padding: 5px;" >
                 <img id='img_group_${ nimg }' src="${ path }/${ nimg }.png" width="100" height="100"  />
             </div>
         `;
     }
     
-    document.getElementById(div_class).innerHTML = htmls;
+    document.getElementById(div_class).innerHTML += innerImgs;
 }
 
 function removeShape(name_class, name_shape){
@@ -271,7 +326,7 @@ function removeShape(name_class, name_shape){
 }
 
 
-const _shuffle = ( array ) => { 
+const _shuffle_dt = ( array ) => { 
   for (let i = array.length - 1; i > 0; i--) { 
     const j = Math.floor(Math.random() * (i + 1)); 
     [array[i], array[j]] = [array[j], array[i]]; 
@@ -290,9 +345,12 @@ function getTrainData( classes_info, augmentation=false, factor=1 ){
     
     let info = null;
     let index = 0;
+    let maxSamples = 50;
     for( let clf of classes_info  ){
         for( let el of clf.elements ){
             info = tf.browser.fromPixels( el );
+            let _shape = el.id.split('_group_')[1].split('_sample_')[0]
+            factor = maxSamples - obj_dt_ds.available_classes[_shape]
             for( let i=0; i<factor; i++ ){
                 dat.x.push( info );
                 dat.y.push( index );
@@ -318,10 +376,12 @@ async function trainBuildDs(){
     
     let elements_cl1 = document.querySelectorAll("#elements_class_1 img");
     let elements_cl2 = document.querySelectorAll("#elements_class_2 img");
+    /*
     if( elements_cl1.length < 4 || elements_cl2.length < 4  ){
         alert('The two groups must contain at least 4 animal images!');
         return;
     }
+    */
     
     let classes_info = [ 
         { 'name': name_cl1, 'elements': elements_cl1 }, 
@@ -381,59 +441,169 @@ function downloadModel(){
     link.click();
 }
 
+/* Load model */
+function loadModel(){
+    info_model.innerHTML = 'Loading model...';
+    document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
+    
+    let target = 'brca1';
+    if( document.getElementById('pred_prot_bcl2') ){
+        target = 'bcl2';
+    }
+    
+    let u = location.href.split('/').slice(0,3).join('/')
+    tf.loadLayersModel( `${u}/models_drugtarget/model_${target}.json`).then( ( model ) => {
+        obj_dt_ds.final_model = model;
+        
+        info_model.innerHTML = 'Model loaded';
+        document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
+    })
+    .catch((err) => {
+      console.log( err );
+    })
+    
+}
+
 /* Prediction */
-let previewUrlDs = "";
-function onLoadPreview_buildDs(e) {
+
+/* Add new player fields */
+function addFieldPlayer(){
+    let n = document.getElementById('players').children.length;
+    let current = document.getElementById('players').innerHTML;
+    let htmls = `
+        <div class="col-auto" >
+            <label class="form-label mt-2" >Player name:</label>
+            <input type="text" class="form-control" id="name_p${n+1}" placeholder="Name player ${n+1}">
+            
+            <label class="form-label mt-2" > Candidate drawing:</label>
+            <input class="form-control" type="file" onchange="onLoadPreview_dt(event, 'p${n+1}')" accept="image/*" id="field_cls_predict_bds_p${n+1}" />
+
+            <div id="container_predict_bds_p${n+1}" style=" margin-top: 10; display: none; " >
+                <img id='img_predict_bds_p${n+1}' src="" width="200" height="200" alt="preview" />
+            </div>
+
+        </div>
+    `;
+    document.getElementById('players').innerHTML += htmls;
+    
+}
+
+/* Show the candidate uploaded compound */
+function onLoadPreview_dt(e, ide) {
+    if( obj_dt_ds.final_model ){
+    
+    }
     const image = e.target.files[0];
     if (!image) {
-        document.getElementById("container_predict_bds").style.display='none';
+        document.getElementById( `container_predict_bds_${ide}`).style.display='none';
         return
     }
+    let previewUrlDs = "";
     if (previewUrlDs) URL.revokeObjectURL(previewUrlDs);
     previewUrlDs = URL.createObjectURL(image);
-    document.getElementById("img_predict_bds").src = previewUrlDs;
-    document.getElementById("container_predict_bds").style.display='';
+    document.getElementById( `img_predict_bds_${ide}` ).src = previewUrlDs;
+    document.getElementById( `container_predict_bds_${ide}` ).style.display='';
 }
 
 function predictFromCustomModel(){
-    let input = document.getElementById('field_cls_predict_bds');
-    if( input.files.length > 0 ){
-        if( obj_dt_ds.model != null ){
-            tf.engine().startScope();
-        
-            let inn = modProcess.getVectorFromImgTag( img_predict_bds );
-            let outcome = modProcess.predictBinary( inn, obj_dt_ds, obj_dt_ds.model, obj_dt_ds.dimension );
-            
-            tf.engine().endScope();
-            
-            tfvis.visor().close();
-            document.getElementById('result_cls_ds').innerHTML = `<span> ${outcome} </span>`;
-            area_result_ds.style.display='';
+    if( ! obj_dt_ds.final_model ){
+        alert('Model was not loaded');
+        return;
+    }
+    
+    tf.engine().startScope();
+    
+    let infop = {};
+    let n = document.getElementById('players').children.length;
+    for( let i=1; i<n+1; i++){
+        let name = `Player ${i}`
+        let ninp = document.getElementById( `name_p${i}` ).value;
+        if( ninp != '' ){
+            name = ninp;
         }
-        else{
-            alert('You must train the model before applying it');
+        let inpimg = document.getElementById(`img_predict_bds_p${i}`);
+        if( inpimg.src != '' ){
+            if( Object.keys(infop).length == 0 ){
+                info_predict.innerHTML = 'Testing candidates...';
+                document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
+            }
+            
+            let inn = modProcess.getVectorFromImgTag( inpimg );
+            let outcome, prob = modProcess.predictBinary( inn, obj_dt_ds, obj_dt_ds.final_model, obj_dt_ds.dimension );
+            infop[name] = prob;
         }
     }
+    tf.engine().endScope();
+    tfvis.visor().close();
+    
+    
+    if( Object.keys(infop).length > 0 ){
+        prepareRankingTable(infop);
+        info_predict.innerHTML = '';
+        document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
+        area_result_ds_dt.style.display='';
+    }
     else{
-        alert('There is no image in selection');
+        alert('There is no candidate image uploaded');
     }
 }
 
+function prepareRankingTable(results){
+    tab_cls_dt_ds.innerHTML = 'Preparing ranking table';
+    
+    var items = Object.keys(results).map( key => [ key, results[key] ] );
+    items.sort(function(first, second) {
+      return second[1] - first[1];
+    });
+    let ord = items.forEach( el => { ord[ el[0] ] = el[1]; } );
+
+    let inner = "";
+    let i = 1;
+    for( let n of Object.keys(ord) ){
+        let color = 'secondary';
+        if( i == 1 ){
+            color = 'success';
+        }
+        inner += `
+        <tr>
+          <td class="table-${color}"> ${i} </td>
+          <td class="table-${color}"> ${n} </td>
+          <td class="table-${color}"> ${results[n]} </td>
+        </tr>
+        `;
+        i+=1;
+    }
+    
+    let htmls = `
+      <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Position</th>
+              <th scope="col">Name</th>
+              <th scope="col">% Suscess</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            ${inner}
+          </tbody>
+     </table>
+    `;
+    tab_cls_dt_ds.innerHTML = htmls;
+}
 
 
 let obj_dt_ds = {};
 let init_case_buildds_dt = () => {
-    obj_dt_ds.available_classes = { "square": 12, "circle": 5, "long_square": 45, "triangle": 9, "triangle_inverted": 9 };
     
-    // Load options of compound shapes
-    generateShapeOptionsSelection();
-    
-    area_result_ds.style.display='none';
+    area_result_ds_dt.style.display='none';
     
     let proportions = { 'cls0': 100, 'cls1': 100 };
     obj_dt_ds = new AIExp( 'custom', 100, proportions, 70, 30,  );
     obj_dt_ds.dimension = [224, 224, 3];
     obj_dt_ds.maxDim = 224;
+    obj_dt_ds.available_classes = { "square": 12, "circle": 5, "long_square": 45, "triangle": 9, "triangle_inverted": 9, "hard_binder_1": 1, "hard_binder_2": 1 };
+    generateShapeOptionsSelection();
 
 }
 init_case_buildds_dt()

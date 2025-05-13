@@ -349,7 +349,7 @@ function predictFromCustomModel(){
             tf.engine().startScope();
         
             let inn = modProcess.getVectorFromImgTag( img_predict_bds );
-            let outcome = modProcess.predictBinary( inn, obj_ds, obj_ds.model, obj_ds.dimension );
+            let outcome, prob = modProcess.predictBinary( inn, obj_ds, obj_ds.model, obj_ds.dimension );
             
             tf.engine().endScope();
             

@@ -227,9 +227,10 @@ function predictFromPretrained() {
             let inn = null;
             
             let resultado = '';
+            let prob = 0;
             if( obj_cls.classes.length == 2 ){
                 inn = modProcess.getVectorFromImgTag( img_predict );
-                resultado = modProcess.predictBinary( inn, obj_cls, obj_cls.model, obj_cls.dimension );
+                resultado, prob = modProcess.predictBinary( inn, obj_cls, obj_cls.model, obj_cls.dimension );
             }
             else {
                 inn = modProcess.getVectorFromCanvas();
