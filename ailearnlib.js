@@ -1,6 +1,6 @@
 
 /* Loading data */
-
+tf.setBackend('cpu');
 class AIExp {
   constructor(idModel, totalData=100, proportionsPerClass=null, train_size_perc=70, test_size_perc=30 ){
     this.idModel = idModel;
