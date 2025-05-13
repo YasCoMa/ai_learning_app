@@ -417,15 +417,16 @@ async function trainBuildDs(){
         tfvis.visor().open();
                 
         notice_ds.innerHTML = 'Training ...';
-        let fitted_model = await modProcess.train( obj_dt_ds, obj_dt_ds.model );
+        await modProcess.train( obj_dt_ds, obj_dt_ds.model );
         await modViz.showAccuracy( obj_dt_ds, obj_dt_ds.model );
         await modViz.showConfusion( obj_dt_ds, obj_dt_ds.model );
-        obj_dt_ds.final_model = fitted_model;
+        obj_dt_ds.final_model = obj_dt_ds.model;
         
         tf.engine().endScope();
         
         document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
         notice_ds.innerHTML = '';
+        down_model.style.display='';
     }, 2000);
 }
 
