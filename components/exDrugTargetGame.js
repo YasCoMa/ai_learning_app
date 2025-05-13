@@ -112,9 +112,9 @@ class DrugTargetGame extends HTMLElement {
                                     </div>
                                     
                                     <div class="col-md-3">
-                                         <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="trainBuildDs()" > Train </button>
+                                         <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="trainBuildDtDs()" > Train </button>
                                          
-                                         <p id="notice_ds" class="mt-2" > </p>
+                                         <p id="notice_dsdt" class="mt-2" > </p>
                                          
                                          <button type="button" class="btn btn-primary disab_ds" id="down_model" style="margin-top: 32px; display: none;" onClick="downloadModel()" > Save model </button>
                                     </div>
@@ -200,7 +200,7 @@ class DrugTargetGame extends HTMLElement {
                                 <div class="col-md-12" id = "area_result_ds_dt" >
                                     <h3> Ranking: </h3>
                                     
-                                    <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="predictFromCustomModel()" > Test protein binder candidates </button>
+                                    <button type="button" class="btn btn-primary disab_ds" style="margin-top: 32px;" onClick="predictFromCustomModelDt()" > Test protein binder candidates </button>
                                     <p id = "info_predict" > </p>
                                         
                                         <div class="justify-content-center text-center" >
@@ -363,7 +363,11 @@ function getTrainData( classes_info, augmentation=false, factor=1 ){
     return dat;
 }
 
-async function trainBuildDs(){
+async function trainBuildDtDs(){
+    if( tfvis.visor().isOpen() ){
+        tfvis.visor().close();
+    }
+
     let name_cl1 = dt_class_1.value ?? "group 1";
     let name_cl2 = dt_class_2.value ?? "group 2";
     console.log(name_cl1, name_cl2)
@@ -401,12 +405,12 @@ async function trainBuildDs(){
         obj_dt_ds.maxDim = 224;
     }
     
-    notice_ds.innerHTML = 'Loading model ...';
+    notice_dsdt.innerHTML = 'Loading model ...';
     
     let augmentation = true;
     let factor = 10;
     obj_dt_ds.train_data = getTrainData( classes_info, augmentation, factor );
-    notice_ds.innerHTML = 'Transforming data ...';
+    notice_dsdt.innerHTML = 'Transforming data ...';
     
     setTimeout( async function () {
         tf.engine().startScope();
@@ -414,7 +418,7 @@ async function trainBuildDs(){
         
         tfvis.visor().open();
                 
-        notice_ds.innerHTML = 'Training ...';
+        notice_dsdt.innerHTML = 'Training ...';
         await modProcess.train( obj_dt_ds, obj_dt_ds.model );
         await modViz.showAccuracy( obj_dt_ds, obj_dt_ds.model );
         await modViz.showConfusion( obj_dt_ds, obj_dt_ds.model );
@@ -423,13 +427,18 @@ async function trainBuildDs(){
         tf.engine().endScope();
         
         document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
-        notice_ds.innerHTML = '';
+        notice_dsdt.innerHTML = '';
         down_model.style.display='';
     }, 2000);
 }
 
 /* Save model */
 function downloadModel(){
+    let target = 'brca1';
+    if( document.getElementById('prot_bcl2').checked ){
+        target = 'bcl2';
+    }
+    
     let url = URL.createObjectURL(
        new Blob([JSON.stringify( obj_dt_ds.final_model, null, 2)], {
           type: "application/json",
@@ -437,7 +446,9 @@ function downloadModel(){
     );
     const link = document.createElement("a");
     link.href = url;
+    link.download = `model_${target}.json` ;
     link.click();
+    return link;
 }
 
 /* Load model */
@@ -446,7 +457,7 @@ function loadModel(){
     document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
     
     let target = 'brca1';
-    if( document.getElementById('pred_prot_bcl2') ){
+    if( document.getElementById('pred_prot_bcl2').checked ){
         target = 'bcl2';
     }
     
@@ -504,7 +515,7 @@ function onLoadPreview_dt(e, ide) {
     document.getElementById( `container_predict_bds_${ide}` ).style.display='';
 }
 
-function predictFromCustomModel(){
+function predictFromCustomModelDt(){
     if( ! obj_dt_ds.final_model ){
         alert('Model was not loaded');
         return;

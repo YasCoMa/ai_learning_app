@@ -145,7 +145,7 @@ modLoad.loadData = async function ( url ) {
 }
 
 /* modProcess - Handle training and prediction */
-let modProcess = { 'epochs':  50 };
+let modProcess = { 'epochs':  20 };
 
 modProcess.getVectorFromCanvas = () => {
 	let image = boundingBox();
