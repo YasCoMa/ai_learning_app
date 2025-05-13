@@ -75,10 +75,10 @@ class DrugTargetGame extends HTMLElement {
                                             </div>
                                             
                                             <div class="col-md-12 mt-1 text-center" style="display: none;">
-                                                <input type="text" class="form-control" id="class_1" value = "Binder" />
+                                                <input type="text" class="form-control" id="dt_class_1" value = "Binder" />
                                             </div>
                                             
-                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_1"   >
+                                            <div class="area_group col-md-12 mt-1 g-2" id="dt_elements_class_1"   >
                                             
                                             </div>
                                         </div>
@@ -90,10 +90,10 @@ class DrugTargetGame extends HTMLElement {
                                             </div>
                                             
                                             <div class="col-md-12 mt-1 text-center" style="display: none;" >
-                                                <input type="text" class="form-control" id="class_2" value = "Not Binder" />
+                                                <input type="text" class="form-control" id="dt_class_2" value = "Not Binder" />
                                             </div>
                                             
-                                            <div class="area_group col-md-12 mt-1 g-2" id="elements_class_2"  >
+                                            <div class="area_group col-md-12 mt-1 g-2" id="dt_elements_class_2"  >
                                             
                                             </div>
                                         </div>
@@ -284,7 +284,7 @@ function generateShapeOptionsSelection(){
 function treatBinderSelection(obj){
     let _class = obj.id.split('_sel_')[0];
     let oposite = ( _class=="binder" ) ? "notbinder" : "binder";
-    let div_class = ( _class=="binder" ) ? "elements_class_2" : "elements_class_1";
+    let div_class = ( _class=="binder" ) ? "dt_elements_class_2" : "dt_elements_class_1";
     let _shape = obj.id.split('_sel_')[1];
     if( obj.checked ){
         document.getElementById(`${oposite}_sel_${_shape}`).disabled = true;
@@ -364,18 +364,16 @@ function getTrainData( classes_info, augmentation=false, factor=1 ){
 }
 
 async function trainBuildDs(){
-    let name_cl1 = class_1.value ?? "group 1";
-    let name_cl2 = class_2.value ?? "group 2";
-    class_1.value = name_cl1;
-    class_2.value = name_cl2;
-    
+    let name_cl1 = dt_class_1.value ?? "group 1";
+    let name_cl2 = dt_class_2.value ?? "group 2";
+    console.log(name_cl1, name_cl2)
     if( name_cl1 == name_cl2 ){
-        alert('Choose distinct names for the groups!');
+        //alert('Choose distinct names for the groups!');
         return;
     }
     
-    let elements_cl1 = document.querySelectorAll("#elements_class_1 img");
-    let elements_cl2 = document.querySelectorAll("#elements_class_2 img");
+    let elements_cl1 = document.querySelectorAll("#dt_elements_class_1 img");
+    let elements_cl2 = document.querySelectorAll("#dt_elements_class_2 img");
     /*
     if( elements_cl1.length < 4 || elements_cl2.length < 4  ){
         alert('The two groups must contain at least 4 animal images!');
