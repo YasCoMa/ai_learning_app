@@ -18,11 +18,11 @@ class DrugTargetGame extends HTMLElement {
             <div class="accordion" id="accordionDrugTarget">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOneDt" aria-expanded="true" aria-controls="collapseOneDt">
                             Choose the protein and Mount the groups of shapes that will "bind" (positive class) or not (negative class) to train the model
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionBuildDs">
+                    <div id="collapseOneDt" class="accordion-collapse collapse show" data-bs-parent="#accordionBuildDs">
                         <div class="accordion-body">                
                             <!-- Show and build dataset -->
                             <div class="row" >
@@ -75,7 +75,7 @@ class DrugTargetGame extends HTMLElement {
                                             </div>
                                             
                                             <div class="col-md-12 mt-1 text-center" style="display: none;">
-                                                <input type="text" class="form-control" id="dt_class_1" value = "Binder" />
+                                                <input type="text" class="form-control" id="dt_class_1" value = "Not Binder" />
                                             </div>
                                             
                                             <div class="area_group col-md-12 mt-1 g-2" id="dt_elements_class_1"   >
@@ -90,7 +90,7 @@ class DrugTargetGame extends HTMLElement {
                                             </div>
                                             
                                             <div class="col-md-12 mt-1 text-center" style="display: none;" >
-                                                <input type="text" class="form-control" id="dt_class_2" value = "Not Binder" />
+                                                <input type="text" class="form-control" id="dt_class_2" value = "Binder" />
                                             </div>
                                             
                                             <div class="area_group col-md-12 mt-1 g-2" id="dt_elements_class_2"  >
@@ -128,11 +128,11 @@ class DrugTargetGame extends HTMLElement {
 
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoDt" aria-expanded="true" aria-controls="collapseTwoDt">
                             Use the trained model to classify handwritten images of compound candidates to bind to the protein targets
                         </button>
                     </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionClassify">
+                    <div id="collapseTwoDt" class="accordion-collapse collapse show" data-bs-parent="#accordionClassify">
                         <div class="accordion-body">
                             <div class="row" >
                                 <div class="col-md-12" >
@@ -185,7 +185,7 @@ class DrugTargetGame extends HTMLElement {
                                             <label class="form-label mt-2" >Player name:</label>
                                             <input type="text" class="form-control" id="name_p1" placeholder="Name player 1">
                                             
-                                            <label class="form-label mt-2" >Choose an image file:</label>
+                                            <label class="form-label mt-2" >Candidate drawing:</label>
                                             <input class="form-control" type="file" onchange="onLoadPreview_dt(event, 'p1')" accept="image/*" id="field_cls_predict_bds_p1" />
 
                                             <div id="container_predict_bds_p1" style=" margin-top: 10; display: none; " >
@@ -345,7 +345,7 @@ function getTrainData( classes_info, augmentation=false, factor=1 ){
     
     let info = null;
     let index = 0;
-    let maxSamples = 50;
+    let maxSamples = 20;
     for( let clf of classes_info  ){
         for( let el of clf.elements ){
             info = tf.browser.fromPixels( el );
@@ -414,6 +414,7 @@ async function trainBuildDtDs(){
     
     setTimeout( async function () {
         tf.engine().startScope();
+        modProcess.epochs = 10;
         obj_dt_ds.model = await eval(`modProcess.getModelImage${ _capitalize(inModel) }( obj_dt_ds )`);
         
         tfvis.visor().open();
@@ -439,6 +440,7 @@ function downloadModel(){
         target = 'bcl2';
     }
     
+    /*
     let url = URL.createObjectURL(
        new Blob([JSON.stringify( obj_dt_ds.final_model, null, 2)], {
           type: "application/json",
@@ -448,11 +450,23 @@ function downloadModel(){
     link.href = url;
     link.download = `model_${target}.json` ;
     link.click();
-    return link;
+    */
+    
+    let filename = `model_${target}`;
+    obj_dt_ds.model.save( `downloads://${filename}` ).then( ( wraped_model ) => {
+        alert('Model saved in your Downloads folder')
+    })
+    .catch((err) => {
+      console.log( err );
+    });
+    
 }
 
 /* Load model */
 function loadModel(){
+    info_predict.innerHTML = '';
+    tab_cls_dt_ds.innerHTML = '';
+    area_result_ds_dt.style.display = 'none';
     info_model.innerHTML = 'Loading model...';
     document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
     
@@ -461,16 +475,17 @@ function loadModel(){
         target = 'bcl2';
     }
     
-    let u = location.href.split('/').slice(0,3).join('/')
+    let u = location.href.split('/').slice(0,3).join('/')+'/ai_learning_app'
     tf.loadLayersModel( `${u}/models_drugtarget/model_${target}.json`).then( ( model ) => {
         obj_dt_ds.final_model = model;
         
         info_model.innerHTML = 'Model loaded';
         document.querySelectorAll('.disab_ds').forEach( e => e.disabled=false );
+        area_result_ds_dt.style.display = '';
     })
     .catch((err) => {
       console.log( err );
-    })
+    });
     
 }
 
@@ -532,7 +547,7 @@ function predictFromCustomModelDt(){
             name = ninp;
         }
         let inpimg = document.getElementById(`img_predict_bds_p${i}`);
-        if( inpimg.src != '' ){
+        if( inpimg.src != '' && inpimg.src != location.href ){
             if( Object.keys(infop).length == 0 ){
                 info_predict.innerHTML = 'Testing candidates...';
                 document.querySelectorAll('.disab_ds').forEach( e => e.disabled=true );
@@ -545,6 +560,9 @@ function predictFromCustomModelDt(){
     }
     tf.engine().endScope();
     tfvis.visor().close();
+    
+    info_predict.innerHTML = '';
+    tab_cls_dt_ds.innerHTML = '';
     
     
     if( Object.keys(infop).length > 0 ){
@@ -559,13 +577,14 @@ function predictFromCustomModelDt(){
 }
 
 function prepareRankingTable(results){
-    tab_cls_dt_ds.innerHTML = 'Preparing ranking table';
+    info_predict.innerHTML = 'Preparing ranking table...';
     
     var items = Object.keys(results).map( key => [ key, results[key] ] );
     items.sort(function(first, second) {
       return second[1] - first[1];
     });
-    let ord = items.forEach( el => { ord[ el[0] ] = el[1]; } );
+    let ord = {};
+    items.forEach( el => { ord[ el[0] ] = el[1]; } );
 
     let inner = "";
     let i = 1;
@@ -590,7 +609,7 @@ function prepareRankingTable(results){
             <tr>
               <th scope="col">Position</th>
               <th scope="col">Name</th>
-              <th scope="col">% Suscess</th>
+              <th scope="col">% Success</th>
             </tr>
           </thead>
           

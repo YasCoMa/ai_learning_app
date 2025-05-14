@@ -145,7 +145,7 @@ modLoad.loadData = async function ( url ) {
 }
 
 /* modProcess - Handle training and prediction */
-let modProcess = { 'epochs':  20 };
+let modProcess = { 'epochs':  50 };
 
 modProcess.getVectorFromCanvas = () => {
 	let image = boundingBox();
@@ -213,6 +213,7 @@ modProcess.predictBinary = function ( pixels, obj, model, dimension ) {
     let index = resultst.argMax(-1).dataSync()[0];
     let outcome = obj.classes[index];
     let prob = results[1]; // index of binder class
+    console.log(results);
   
     return outcome, prob;
 }
