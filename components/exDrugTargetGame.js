@@ -531,6 +531,8 @@ function onLoadPreview_dt(e, ide) {
 }
 
 function predictFromCustomModelDt(){
+    obj_dt_ds.classes = ["Not Binder", "Binder"];
+    
     if( ! obj_dt_ds.final_model ){
         alert('Model was not loaded');
         return;
