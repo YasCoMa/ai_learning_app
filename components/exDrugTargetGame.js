@@ -599,7 +599,7 @@ function prepareRankingTable(results){
         <tr>
           <td class="table-${color}"> ${i} </td>
           <td class="table-${color}"> ${n} </td>
-          <td class="table-${color}"> ${results[n]} </td>
+          <td class="table-${color}"> ${results[n]*100} </td>
         </tr>
         `;
         i+=1;
