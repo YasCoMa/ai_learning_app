@@ -195,6 +195,22 @@ class DrugTargetGame extends HTMLElement {
                                         </div>
                                     
                                     </div>
+                                    
+                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="startCamera()" > Take candidate images from webcam </button>
+                                    <p id='cam_warn' class='mt-2' style='display: none' >No camera available in this device! Use the upload buttons</p>
+                                    <div class="row g-2 align-items-start" id = "camera_area" style = 'display: none;' >
+                                        
+                                        <h3> Choose the player and take its drawing picture: </h3>
+                                        <div class="col-md-12" id = 'options_player_camera' >
+                                        </div>
+                                        
+                                        <div class="col-md-12" >
+                                            <video id="video" autoplay></video>
+                                            <button class="btn btn-success btn-sm" id="captureButton">Take Picture</button>
+                                            <canvas id="canvas" style="display:none;"></canvas>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                                 
                                 <div class="col-md-12" id = "area_result_ds_dt" >
@@ -262,6 +278,69 @@ class DrugTargetGame extends HTMLElement {
   }
 }
 customElements.define('drugtarget-component', DrugTargetGame);
+
+/* Get images from webcam option */
+const video = document.getElementById('video');
+async function startCamera() {
+    
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        generatePlayersOptionCamera();
+        camera_area.style.display = '';
+        cam_warn.style.display = 'none';
+    } catch (err) {
+        console.error("Error accessing the camera", err);
+        camera_area.style.display = 'none';
+        cam_warn.style.display = '';
+        alert('No camera available');
+    }
+}
+
+const canvasim = document.getElementById('canvas');
+const captureButton = document.getElementById('captureButton');
+captureButton.addEventListener('click', () => {
+    let idx = 1;
+    let n = document.getElementById('players').children.length;
+    for( let i=1; i<n+1; i++){
+        if( document.getElementById( `camera_img_play${i}` ).checked ){
+            idx = i
+        }
+    }
+    let photo = document.getElementById( `img_predict_bds_${ide}` );
+    document.getElementById( `container_predict_bds_${ide}` ).style.display='';
+
+    canvasim.width = video.videoWidth;
+    canvasim.height = video.videoHeight;
+    canvasim.getContext('2d').drawImage(video, 0, 0, canvasim.width, canvasim.height);
+    let imageDataUrl = canvas.toDataURL('image/jpeg');
+    photo.src = imageDataUrl;
+});
+
+function generatePlayersOptionCamera(){
+    let htmls = "";
+    let n = document.getElementById('players').children.length;
+    let ch = 'checked="true"';
+    for( let i=1; i<n+1; i++){
+        if( i>1 ){
+            ch = '';
+        }
+        let name = `Player ${i}`
+        let ninp = document.getElementById( `name_p${i}` ).value;
+        if( ninp != '' ){
+            name = ninp;
+        }
+        htmls += `
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="camera_img_choice" id="camera_img_play${i}" ${ch} >
+          <label class="form-check-label" for="camera_img_play${i}">
+            ${name}
+          </label>
+        </div>
+        `;
+    }
+    document.getElementById('options_player_camera').innerHTML = htmls;
+}
 
 /* Load examples upon checkbox item selection */
 function generateShapeOptionsSelection(){
@@ -510,6 +589,7 @@ function addFieldPlayer(){
         </div>
     `;
     document.getElementById('players').innerHTML += htmls;
+    generatePlayersOptionCamera();
     
 }
 
