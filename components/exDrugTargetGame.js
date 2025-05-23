@@ -196,7 +196,7 @@ class DrugTargetGame extends HTMLElement {
                                     
                                     </div>
                                     
-                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="startCamera()" > Take candidate images from webcam </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px; display: none;" onClick="startCamera()" > Take candidate images from webcam </button>
                                     <p id='cam_warn' class='mt-2' style='display: none' >No camera available in this device! Use the upload buttons</p>
                                     <div class="row g-2 align-items-start" id = "camera_area" style = 'display: none;' >
                                         
@@ -336,13 +336,13 @@ captureButton.addEventListener('click', () => {
         }
     }
     let photo = document.getElementById( `img_predict_bds_p${ide}` );
-    document.getElementById( `container_predict_bds_p${ide}` ).style.display='';
 
     canvasim.width = video.videoWidth;
     canvasim.height = video.videoHeight;
     canvasim.getContext('2d').drawImage(video, 0, 0, canvasim.width, canvasim.height);
     let imageDataUrl = canvas.toDataURL('image/png');
     photo.src = imageDataUrl;
+    document.getElementById( `container_predict_bds_${ide}` ).style.display='';
 });
 
 function generatePlayersOptionCamera(){
