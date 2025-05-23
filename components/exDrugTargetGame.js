@@ -279,16 +279,42 @@ class DrugTargetGame extends HTMLElement {
 }
 customElements.define('drugtarget-component', DrugTargetGame);
 
+let width = 320;
 /* Get images from webcam option */
 const video = document.getElementById('video');
 async function startCamera() {
     
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ facingMode: 'user', video: true, audio: false });
         video.srcObject = stream;
+        video.play();
+        
         generatePlayersOptionCamera();
         camera_area.style.display = '';
         cam_warn.style.display = 'none';
+        
+        video.addEventListener(
+          "canplay",
+          (ev) => {
+            if (!streaming) {
+              height = video.videoHeight / (video.videoWidth / width);
+
+              // Firefox currently has a bug where the height can't be read from
+              // the video, so we will make assumptions if this happens.
+              if (isNaN(height)) {
+                height = width / (4 / 3);
+              }
+
+              video.setAttribute("width", width);
+              video.setAttribute("height", height);
+              canvas.setAttribute("width", width);
+              canvas.setAttribute("height", height);
+              streaming = true;
+            }
+          },
+          false,
+        );
+        
     } catch (err) {
         console.error("Error accessing the camera", err);
         camera_area.style.display = 'none';
@@ -313,7 +339,7 @@ captureButton.addEventListener('click', () => {
     canvasim.width = video.videoWidth;
     canvasim.height = video.videoHeight;
     canvasim.getContext('2d').drawImage(video, 0, 0, canvasim.width, canvasim.height);
-    let imageDataUrl = canvas.toDataURL('image/jpeg');
+    let imageDataUrl = canvas.toDataURL('image/png');
     photo.src = imageDataUrl;
 });
 
