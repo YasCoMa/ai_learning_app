@@ -280,6 +280,8 @@ class DrugTargetGame extends HTMLElement {
 customElements.define('drugtarget-component', DrugTargetGame);
 
 let width = 320;
+let streaming = false;
+ 
 /* Get images from webcam option */
 const video = document.getElementById('video');
 async function startCamera() {
