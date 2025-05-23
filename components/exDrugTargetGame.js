@@ -307,8 +307,8 @@ captureButton.addEventListener('click', () => {
             ide = i
         }
     }
-    let photo = document.getElementById( `img_predict_bds_${ide}` );
-    document.getElementById( `container_predict_bds_${ide}` ).style.display='';
+    let photo = document.getElementById( `img_predict_bds_p${ide}` );
+    document.getElementById( `container_predict_bds_p${ide}` ).style.display='';
 
     canvasim.width = video.videoWidth;
     canvasim.height = video.videoHeight;
