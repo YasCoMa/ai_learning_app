@@ -300,11 +300,11 @@ async function startCamera() {
 const canvasim = document.getElementById('canvas');
 const captureButton = document.getElementById('captureButton');
 captureButton.addEventListener('click', () => {
-    let idx = 1;
+    let ide = 1;
     let n = document.getElementById('players').children.length;
     for( let i=1; i<n+1; i++){
         if( document.getElementById( `camera_img_play${i}` ).checked ){
-            idx = i
+            ide = i
         }
     }
     let photo = document.getElementById( `img_predict_bds_${ide}` );
