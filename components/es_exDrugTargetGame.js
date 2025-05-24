@@ -609,7 +609,7 @@ function prepareRankingTable(results){
         <tr>
           <td class="table-${color}"> ${i} </td>
           <td class="table-${color}"> ${n} </td>
-          <td class="table-${color}"> ${results[n]} </td>
+          <!--<td class="table-${color}"> ${results[n]} </td>-->
         </tr>
         `;
         i+=1;
@@ -621,7 +621,7 @@ function prepareRankingTable(results){
             <tr>
               <th scope="col">Posición</th>
               <th scope="col">Nombre</th>
-              <th scope="col">% Éxito</th>
+              <!--<th scope="col">% Éxito</th>-->
             </tr>
           </thead>
           
