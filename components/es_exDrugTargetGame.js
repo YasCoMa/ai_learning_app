@@ -605,11 +605,12 @@ function prepareRankingTable(results){
         if( i == 1 ){
             color = 'success';
         }
+        let res = parseFloat( results[n]*100 ).toFixed(2);
         inner += `
         <tr>
           <td class="table-${color}"> ${i} </td>
           <td class="table-${color}"> ${n} </td>
-          <td class="table-${color}"> ${results[n]} </td>
+          <td class="table-${color}"> ${res} </td>
         </tr>
         `;
         i+=1;
