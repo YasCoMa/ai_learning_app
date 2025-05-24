@@ -179,6 +179,7 @@ class DrugTargetGame extends HTMLElement {
                                     <h3> Afegir jugadors: </h3>
                                     
                                     <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="addFieldPlayer()" > Afegir un nou jugador </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="clean()" > Netejar el camp </button>
                                     
                                     <div class="row g-2 align-items-start" id = "players" >
                                         <div class="col-auto" >
@@ -262,6 +263,14 @@ class DrugTargetGame extends HTMLElement {
   }
 }
 customElements.define('drugtarget-component', DrugTargetGame);
+
+function clean(){
+    let n = document.getElementById('players').children.length;
+    for( let i=1; i<n+1; i++){
+        let inpimg = document.getElementById(`img_predict_bds_p${i}`);
+        inpimg.src = '';
+   }
+}
 
 /* Load examples upon checkbox item selection */
 function generateShapeOptionsSelection(){

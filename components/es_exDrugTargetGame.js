@@ -180,6 +180,7 @@ En esta pestaña, puedes construir un modelo en el dominio de la medicina que ap
                                     <h3> Add players: </h3>
                                     
                                     <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="addFieldPlayer()" > Añadir nuevo jugador </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 32px;" onClick="clean()" > Limpiar el campo </button>
                                     
                                     <div class="row g-2 align-items-start" id = "players" >
                                         <div class="col-auto" >
@@ -263,6 +264,14 @@ En esta pestaña, puedes construir un modelo en el dominio de la medicina que ap
   }
 }
 customElements.define('drugtarget-component', DrugTargetGame);
+
+function clean(){
+    let n = document.getElementById('players').children.length;
+    for( let i=1; i<n+1; i++){
+        let inpimg = document.getElementById(`img_predict_bds_p${i}`);
+        inpimg.src = '';
+   }
+}
 
 /* Load examples upon checkbox item selection */
 function generateShapeOptionsSelection(){
